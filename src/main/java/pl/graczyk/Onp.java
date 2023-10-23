@@ -42,12 +42,9 @@ public class Onp {
                 }
             }
         }
-
         result = emptyTheStack(result);
         return result;
-
     }
-
     /**
      * Checks if an element is open or close bracket
      *
