@@ -1,12 +1,11 @@
 package pl.graczyk;
 
-import java.util.List;
 import java.util.Stack;
 
 import static pl.graczyk.Constants.*;
 
 public class Onp {
-    private String expression;
+    private final String expression;
     Stack<Character> onpStack = new Stack();
 
     public Onp(String expression) {
@@ -17,25 +16,36 @@ public class Onp {
         String result = "";
         char[] expressionChars = expression.toCharArray();
 
-        for(char expressionChar: expressionChars) {
-            if(Character.isDigit(expressionChar)) {
-                result += expressionChar;
-            } else if (expressionChar == OPEN_BRACKET) {
-                onpStack.push(expressionChar);
-            } else if(expressionChar == CLOSE_BRACKET) {
-                result = emptyTheStack(result);
-            }  else if (isOperator(expressionChar)) {
-                if(!onpStack.empty()){
-                    char lastStackElement = onpStack.peek();
-                    if(stackElHasHigherOrSamePriority(expressionChar,lastStackElement)
-                            && elIsNotBracket(lastStackElement)) {
-                        result += onpStack.pop();
-                    }}
-                onpStack.push(expressionChar);
+        for (char expressionChar : expressionChars) {
+            switch(expressionChar) {
+                case OPEN_BRACKET
+                        -> onpStack.push(expressionChar);
+                case CLOSE_BRACKET
+                        -> result = emptyTheStack(result);
+                case PLUS, MINUS, MULTIPLY, DIVIDE
+                        -> {
+                    while(!onpStack.empty()) {
+                        char lastStackElement = onpStack.peek();
+                        if(stackElHasHigherOrSamePriority(expressionChar, lastStackElement)
+                                && elIsNotBracket(lastStackElement)) {
+                            result += onpStack.pop();
+                        }else {
+                            break;
+                        }}
+                    onpStack.push(expressionChar);
+                }
+                default
+                        -> {
+                    if(Character.isDigit(expressionChar)) {
+                        result += expressionChar;
+                    }
+                }
             }
         }
+
         result = emptyTheStack(result);
         return result;
+
     }
 
     /**
@@ -55,13 +65,15 @@ public class Onp {
      * @return  modified string.
      */
     private String emptyTheStack(String result) {
+        StringBuilder resultBuilder = new StringBuilder(result);
         while (!onpStack.isEmpty()) {
             if(onpStack.peek().equals(OPEN_BRACKET) || onpStack.peek().equals(CLOSE_BRACKET)) {
                 onpStack.pop();
             } else {
-                result += onpStack.pop();
+                resultBuilder.append(onpStack.pop());
             }
         }
+        result = resultBuilder.toString();
         return result;
     }
 
@@ -75,16 +87,5 @@ public class Onp {
                                                    char lastStackElement) {
         return !((expressionChar == MULTIPLY || expressionChar == DIVIDE)
               && (lastStackElement == PLUS || lastStackElement == MINUS));
-    }
-
-    /**
-     * Check if element is an Operator
-     *
-     * @return  {@code true} if element is an operator;
-     * {@code false} otherwise.
-     */
-    private boolean isOperator(char expressionChar) {
-        List<Character> operators = List.of(MULTIPLY, MINUS, DIVIDE, PLUS);
-        return operators.contains(expressionChar);
     }
 }
