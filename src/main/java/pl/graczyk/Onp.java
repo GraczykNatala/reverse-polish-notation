@@ -18,35 +18,31 @@ public class Onp {
         for (char expressionChar : expressionChars) {
             nextCharIndex+= 1;
             switch(expressionChar) {
-                case OPEN_BRACKET
-                        -> onpStack.push(expressionChar);
-                case CLOSE_BRACKET
-                        -> result = emptyTheStack(result);
-                case PLUS, MINUS, MULTIPLY, DIVIDE
-                        -> {
-                    if(negativeNumber(nextCharIndex, expressionChar, expressionChars)) {
+                case OPEN_BRACKET ->
+                        onpStack.push(expressionChar);
+                case CLOSE_BRACKET ->
+                        result = emptyTheStack(result);
+                case PLUS, MINUS, MULTIPLY, DIVIDE -> {
+                    if (negativeNumber(nextCharIndex, expressionChar, expressionChars)) {
                         result += expressionChar;
-                    }
-                    else {
-                        while(!onpStack.empty()) {
+                    } else {
+                        while (!onpStack.empty()) {
                             char lastStackElement = onpStack.peek();
-                            if(stackElHasHigherOrSamePriority(expressionChar, lastStackElement) && elIsNotBracket(
-                                    lastStackElement)) {
+                            if (stackElHasHigherOrSamePriority(expressionChar, lastStackElement)
+                                    && elIsNotBracket(lastStackElement)) {
                                 result += onpStack.pop() + " ";
-                            }
-                            else {
+                            }else {
                                 break;
                             }
                         }
-
                     onpStack.push(expressionChar);
                 }
                 }
-                default
-                        -> {
-                    if(Character.isDigit(expressionChar)) {
+                default -> {
+                    if (Character.isDigit(expressionChar)) {
                         result += expressionChar;
-                        if(nextCharIndex < expressionChars.length && !Character.isDigit(expressionChars[nextCharIndex])) {
+                        if (nextCharIndex < expressionChars.length
+                                && !Character.isDigit(expressionChars[nextCharIndex])) {
                                 result += " ";
                         } else if (isLastCharButStackNotEmpty(expressionChars, nextCharIndex)) {
                             result += " ";
@@ -64,11 +60,11 @@ public class Onp {
      *
      * @return  {@code true} if char is element of negative number; {@code false} otherwise.
      */
-    //trzeba jeszcze dodac jesli znak wczesniej byl operator
-    private boolean negativeNumber(int nextCharIndex, char expressionChar, char[] expression) {
-        return expressionChar == MINUS //jesli jest minus
-                && (nextCharIndex == 1 //i jest na pierwszym miejscu
-                ||  (isOperator(expression[nextCharIndex -2]))); //albo wczesniej byl inny znak
+    private boolean negativeNumber(int nextCharIndex,
+                                   char expressionChar,
+                                   char[] expression) {
+        return expressionChar == MINUS
+                && (nextCharIndex == 1 || (isOperator(expression[nextCharIndex -2])));
 
 
     }
@@ -83,7 +79,8 @@ public class Onp {
      *
      * @return  {@code true} if char is last in expression and stack is not empty; {@code false} otherwise.
      */
-    private boolean isLastCharButStackNotEmpty(char[] expressionChars, int nextCharIndex) {
+    private boolean isLastCharButStackNotEmpty(char[] expressionChars,
+                                               int nextCharIndex) {
         return nextCharIndex == expressionChars.length && !onpStack.isEmpty();
     }
 
@@ -104,7 +101,7 @@ public class Onp {
     private String emptyTheStack(String result) {
         StringBuilder resultBuilder = new StringBuilder(result);
         while (!onpStack.isEmpty()) {
-            if(onpStack.peek().equals(OPEN_BRACKET) || onpStack.peek().equals(CLOSE_BRACKET)) {
+            if (onpStack.peek().equals(OPEN_BRACKET) || onpStack.peek().equals(CLOSE_BRACKET)) {
                 onpStack.pop();
             } else {
                 resultBuilder.append(onpStack.pop()).append(" ");
