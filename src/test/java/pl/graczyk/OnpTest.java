@@ -39,5 +39,29 @@ public class OnpTest extends TestCase {
         String result = onpCalculator.calcOnp();
         assertEquals(expectedOnpResult, result);
     }
+    @Test
+    @DisplayName("Negative numbers")
+    public void testCalcOnp5() {
+        Onp onpCalculator = new Onp("-1*-3+4*1");
+        String expectedOnpResult = "-1 -3 * 4 1 * + ";
+        String result = onpCalculator.calcOnp();
+        assertEquals(expectedOnpResult, result);
+    }
+    @Test
+    @DisplayName("Negative numbers and brackets")
+    public void testCalcOnp6() {
+        Onp onpCalculator = new Onp("(-1+-2)*3+4*1");
+        String expectedOnpResult = "-1 -2 + 3 * 4 1 * + ";
+        String result = onpCalculator.calcOnp();
+        assertEquals(expectedOnpResult, result);
+    }
+    @Test
+    @DisplayName("Negative and multidigit numbers and brackets")
+    public void testCalcOnp7() {
+        Onp onpCalculator = new Onp("(-11+2)*333+4*-12");
+        String expectedOnpResult = "-11 2 + 333 * 4 -12 * + ";
+        String result = onpCalculator.calcOnp();
+        assertEquals(expectedOnpResult, result);
+    }
 
 }

@@ -10,6 +10,4 @@ public class Main {
         String result = new Onp(scanner.next()).calcOnp();
         System.out.println(result);
     }
-
-    //todo minus numbers
 }

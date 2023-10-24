@@ -1,4 +1,5 @@
 package pl.graczyk;
+import java.util.List;
 import java.util.Stack;
 import static pl.graczyk.Constants.*;
 
@@ -23,15 +24,23 @@ public class Onp {
                         -> result = emptyTheStack(result);
                 case PLUS, MINUS, MULTIPLY, DIVIDE
                         -> {
-                    while(!onpStack.empty()) {
-                        char lastStackElement = onpStack.peek();
-                        if(stackElHasHigherOrSamePriority(expressionChar, lastStackElement)
-                                && elIsNotBracket(lastStackElement)) {
-                            result += onpStack.pop() + " ";
-                        }else {
-                            break;
-                        }}
+                    if(negativeNumber(nextCharIndex, expressionChar, expressionChars)) {
+                        result += expressionChar;
+                    }
+                    else {
+                        while(!onpStack.empty()) {
+                            char lastStackElement = onpStack.peek();
+                            if(stackElHasHigherOrSamePriority(expressionChar, lastStackElement) && elIsNotBracket(
+                                    lastStackElement)) {
+                                result += onpStack.pop() + " ";
+                            }
+                            else {
+                                break;
+                            }
+                        }
+
                     onpStack.push(expressionChar);
+                }
                 }
                 default
                         -> {
@@ -49,6 +58,26 @@ public class Onp {
         result = emptyTheStack(result);
         return result;
     }
+    /**
+     * Checks if char is minus, and it is first in the array or cames after another operator
+     * which suggests that number is negative, and we should not put that operator on the stack
+     *
+     * @return  {@code true} if char is element of negative number; {@code false} otherwise.
+     */
+    //trzeba jeszcze dodac jesli znak wczesniej byl operator
+    private boolean negativeNumber(int nextCharIndex, char expressionChar, char[] expression) {
+        return expressionChar == MINUS //jesli jest minus
+                && (nextCharIndex == 1 //i jest na pierwszym miejscu
+                ||  (isOperator(expression[nextCharIndex -2]))); //albo wczesniej byl inny znak
+
+
+    }
+    private boolean isOperator(char expressionChar) {
+        List<Character> operators = List.of(MULTIPLY, MINUS, DIVIDE, PLUS, OPEN_BRACKET, CLOSE_BRACKET);
+        return operators.contains(expressionChar);
+    }
+
+
     /**
      * Checks if an element is last element, but stack is not empty so there should be a space between this and next char
      *
