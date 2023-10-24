@@ -10,7 +10,7 @@ public class OnpTest extends TestCase {
     @DisplayName("Basic expression")
     public void testCalcOnp() {
         Onp onpCalculator = new Onp("2+2");
-        String expectedOnpResult = "22+";
+        String expectedOnpResult = "2 2 + ";
         String result = onpCalculator.calcOnp();
         assertEquals(expectedOnpResult, result);
     }
@@ -19,7 +19,7 @@ public class OnpTest extends TestCase {
     @DisplayName("Expression with brackets")
     public void testCalcOnp2() {
         Onp onpCalculator = new Onp("(1+2)*3)");
-        String expectedOnpResult = "12+3*";
+        String expectedOnpResult = "1 2 + 3 * ";
         String result = onpCalculator.calcOnp();
         assertEquals(expectedOnpResult, result);
     }
@@ -27,7 +27,15 @@ public class OnpTest extends TestCase {
     @DisplayName("Casual expression")
     public void testCalcOnp3() {
         Onp onpCalculator = new Onp("(1+2)*3+4*1");
-        String expectedOnpResult = "12+3*41*+";
+        String expectedOnpResult = "1 2 + 3 * 4 1 * + ";
+        String result = onpCalculator.calcOnp();
+        assertEquals(expectedOnpResult, result);
+    }
+    @Test
+    @DisplayName("Multidigit numbers")
+    public void testCalcOnp4() {
+        Onp onpCalculator = new Onp("(11+2)*333+4*12");
+        String expectedOnpResult = "11 2 + 333 * 4 12 * + ";
         String result = onpCalculator.calcOnp();
         assertEquals(expectedOnpResult, result);
     }

@@ -1,12 +1,10 @@
 package pl.graczyk;
-
 import java.util.Stack;
-
 import static pl.graczyk.Constants.*;
 
 public class Onp {
     private final String expression;
-    Stack<Character> onpStack = new Stack();
+     private final Stack<Character> onpStack = new Stack<>();
 
     public Onp(String expression) {
         this.expression = expression;
@@ -15,8 +13,9 @@ public class Onp {
     public String calcOnp() {
         String result = "";
         char[] expressionChars = expression.toCharArray();
-
+        int nextCharIndex = 0;
         for (char expressionChar : expressionChars) {
+            nextCharIndex+= 1;
             switch(expressionChar) {
                 case OPEN_BRACKET
                         -> onpStack.push(expressionChar);
@@ -28,7 +27,7 @@ public class Onp {
                         char lastStackElement = onpStack.peek();
                         if(stackElHasHigherOrSamePriority(expressionChar, lastStackElement)
                                 && elIsNotBracket(lastStackElement)) {
-                            result += onpStack.pop();
+                            result += onpStack.pop() + " ";
                         }else {
                             break;
                         }}
@@ -38,6 +37,11 @@ public class Onp {
                         -> {
                     if(Character.isDigit(expressionChar)) {
                         result += expressionChar;
+                        if(nextCharIndex < expressionChars.length && !Character.isDigit(expressionChars[nextCharIndex])) {
+                                result += " ";
+                        } else if (isLastCharButStackNotEmpty(expressionChars, nextCharIndex)) {
+                            result += " ";
+                        }
                     }
                 }
             }
@@ -46,8 +50,16 @@ public class Onp {
         return result;
     }
     /**
-     * Checks if an element is open or close bracket
+     * Checks if an element is last element, but stack is not empty so there should be a space between this and next char
      *
+     * @return  {@code true} if char is last in expression and stack is not empty; {@code false} otherwise.
+     */
+    private boolean isLastCharButStackNotEmpty(char[] expressionChars, int nextCharIndex) {
+        return nextCharIndex == expressionChars.length && !onpStack.isEmpty();
+    }
+
+    /**
+     * Checks if an element is open or close bracket
      * @return  {@code true} if item is not open/close bracket; {@code false} otherwise.
      */
     private boolean elIsNotBracket(char stackElement) {
@@ -58,7 +70,6 @@ public class Onp {
     /**
      * Push each element of stack.
      * If it is not open/close bracket, add element to result string.
-     *
      * @return  modified string.
      */
     private String emptyTheStack(String result) {
@@ -67,7 +78,7 @@ public class Onp {
             if(onpStack.peek().equals(OPEN_BRACKET) || onpStack.peek().equals(CLOSE_BRACKET)) {
                 onpStack.pop();
             } else {
-                resultBuilder.append(onpStack.pop());
+                resultBuilder.append(onpStack.pop()).append(" ");
             }
         }
         result = resultBuilder.toString();
@@ -76,7 +87,6 @@ public class Onp {
 
     /**
      * Check if stack element has Higher or Same Priority
-     *
      * @return  {@code true} if expression char is not * or / and if stack element is not + or -;
      * {@code false} otherwise.
      */
